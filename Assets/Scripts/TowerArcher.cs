@@ -3,45 +3,26 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyTower : Enemy
+public class TowerArcher : Enemy
 {
-    private Vector3 projectilePosition;
-    private Vector3 screenPosition;
-
-    // shoot timer
-    private float shootTimer, shootTimerMax;
-
-    private float range;
-
-    [SerializeField]
-    private GameObject projectile;
-
     private void Start()
     {
-        projectilePosition = GetComponentInChildren<Transform>().position;
+        projectilePosition = transform.Find("Projectile").GetComponentInChildren<Transform>().position;
         range = 40f;
         shootTimerMax = 0.15f;
     }
     private void Update()
     {
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    screenPosition = Input.mousePosition;
-        //    Ray ray = Camera.main.ScreenPointToRay(screenPosition);
-        //    if(Physics.Raycast(ray, out RaycastHit hit))
-        //    {
-        //        Create(projectilePosition, hit.point);
-        //    }
 
-        //}
+        CheckHealth();
 
         shootTimer -= Time.deltaTime;
 
         if (shootTimer <= 0f)
         {
             shootTimer = shootTimerMax;
-
-            PlayerTroop troop = GameObject.FindObjectOfType<PlayerTroop>();
+            // remember to cycle troops
+            GameObject troop = LookForEnemy();
             if (troop != null)
             {
                 Create(projectilePosition, troop.transform.position);
@@ -53,6 +34,7 @@ public class EnemyTower : Enemy
     {
         GameObject obj = Instantiate(projectile, spawnPosition, Quaternion.identity);
         Projectile p = obj.GetComponent<Projectile>();
+        p.damage = damage;
         p.p_targetPosition = targetPosition;
     }
 
