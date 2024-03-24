@@ -1,10 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+
+    public Type.EType enemyType;
+
     [SerializeField]
     protected int health;
 
@@ -12,7 +12,12 @@ public class Enemy : MonoBehaviour
     protected int damage;
 
     protected Vector3 projectilePosition;
-    protected Vector3 screenPosition;
+
+    // player troop for enemy search
+    protected GameObject troop;
+
+    // to target one player troop at a time
+    private bool isTarget;
 
     [SerializeField]
     protected float range;
@@ -26,8 +31,23 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     protected GameObject projectile;
 
+    private void Start()
+    {
+        projectilePosition = transform.Find("Projectile").GetComponentInChildren<Transform>().position;
+        range = 40f;
+        shootTimerMax = 0.15f;
+    }
+    private void Update()
+    {
+
+        CheckHealth();
+
+        EnemyShoot();
+
+    }
+
     ///<summary>
-    ///This funcion looks for all the nearest player troop to the tower enemy.
+    ///This function looks for all the nearest player troop to the tower enemy.
     ///Note that it returns a GameObject.
     ///</summary>
     protected GameObject LookForEnemy()
@@ -75,5 +95,42 @@ public class Enemy : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    protected void EnemyShoot()
+    {
+        shootTimer -= Time.deltaTime;
+
+        if (shootTimer <= 0f)
+        {
+            shootTimer = shootTimerMax;
+
+            // check if the tower has target a player troop
+            if (!isTarget)
+            {
+                troop = LookForEnemy();
+            }
+
+            // if there is a player troop and is in range, then shoot
+            if (troop != null)
+            {
+                isTarget = true;
+                Create(projectilePosition, troop.transform.position);
+            }
+            // player troop is empty, then look for another one nearer to the tower
+            else
+            {
+                isTarget = false;
+            }
+        }
+    }
+
+    // spawning projectiles function
+    private void Create(Vector3 spawnPosition, Vector3 targetPosition)
+    {
+        GameObject obj = Instantiate(projectile, spawnPosition, Quaternion.identity);
+        Projectile p = obj.GetComponent<Projectile>();
+        p.damage = damage;
+        p.p_targetPosition = targetPosition;
     }
 }

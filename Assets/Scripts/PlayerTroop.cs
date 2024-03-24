@@ -1,11 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.TextCore.Text;
 
 public class PlayerTroop : MonoBehaviour
 {
+
+    public Type.TroopType troopType;
+
+    public Type.Priority priorityEnemy;
+
     [SerializeField]
     private int health = 100;
 
@@ -44,7 +46,7 @@ public class PlayerTroop : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             // remember to cycle through all the enemy script
-            TowerArcher enemy = other.GetComponent<TowerArcher>();
+            Enemy enemy = other.GetComponent<Enemy>();
             if(enemy != null)
             {
                 enemy.TakeDamage(damage);
@@ -53,10 +55,10 @@ public class PlayerTroop : MonoBehaviour
     }
 
     ///<summary>
-    ///This funcion looks for all the nearest tower enemy to the player troop.
+    ///This function looks for all the nearest tower enemy to the player troop.
     ///Note that it returns a GameObject.
     ///</summary>
-    protected GameObject LookForEnemy()
+    protected GameObject LookForEnemy(Type.Priority priority = Type.Priority.None)
     {
         GameObject result = null;
         GameObject[] objEnemies = GameObject.FindGameObjectsWithTag("Enemy");
@@ -73,7 +75,9 @@ public class PlayerTroop : MonoBehaviour
         {
             for (int j = 0; j < objEnemies.Length; j++)
             {
+                // skip when it check itself
                 if (i == j) continue;
+
                 float a = Vector3.Distance(transform.position, objEnemies[i].transform.position);
                 float b = Vector3.Distance(transform.position, objEnemies[j].transform.position);
                 if (a < b)

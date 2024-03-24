@@ -21,7 +21,7 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
-        MoveTowrdPlayerTroop();
+        MoveTowardPlayerTroop();
         
         // destroy when distance between projectile and troop is small
         float destroySelfDistance = 1f;
@@ -45,7 +45,7 @@ public class Projectile : MonoBehaviour
     }
 
     // move toward player troop
-    private void MoveTowrdPlayerTroop()
+    private void MoveTowardPlayerTroop()
     {
         Vector3 moveDir = (targetPosition - transform.position).normalized;
 
