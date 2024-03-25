@@ -6,24 +6,12 @@ public class Type
         Wizard,
         Canon,
         Ballista,
-        Poison
+        Poison,
+        None
     }
     public enum TroopType
     {
-        Barbarian,
-        Knight,
-        Mage,
-        Rogue,
-        Golem
-    }
-
-    public enum Priority
-    {
-        None,
-        Archer,
-        Wizard,
-        Canon,
-        Ballista,
-        Poison
+        Melee,
+        Range
     }
 }

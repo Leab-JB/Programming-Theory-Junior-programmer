@@ -5,6 +5,8 @@ public class Enemy : MonoBehaviour
 
     public Type.EType enemyType;
 
+    public bool isDeath = false;
+
     [SerializeField]
     protected int health;
 
@@ -93,6 +95,7 @@ public class Enemy : MonoBehaviour
     {
         if(health < 0)
         {
+            isDeath = true;
             Destroy(gameObject);
         }
     }

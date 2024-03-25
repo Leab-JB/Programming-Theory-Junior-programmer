@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public PlayerTroop playerTroop;
+    public GameObject playerTroop;
 
     private void Update()
     {
@@ -14,7 +12,9 @@ public class Player : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(screenPosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                Instantiate(playerTroop, hit.point, Quaternion.identity);
+                // Restrict to instantiate troop inside the Enemy
+                if(!hit.collider.CompareTag("Enemy"))
+                    Instantiate(playerTroop, hit.point, Quaternion.identity);
             }
 
         }
