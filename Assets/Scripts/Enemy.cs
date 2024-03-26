@@ -5,8 +5,6 @@ public class Enemy : MonoBehaviour
 
     public Type.EType enemyType;
 
-    public bool isDeath = false;
-
     [SerializeField]
     protected int health;
 
@@ -33,13 +31,12 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     protected GameObject projectile;
 
-    private void Start()
+    protected virtual void Start()
     {
         projectilePosition = transform.Find("Projectile").GetComponentInChildren<Transform>().position;
-        range = 40f;
         shootTimerMax = 0.15f;
     }
-    private void Update()
+    protected virtual void Update()
     {
 
         CheckHealth();
@@ -95,7 +92,6 @@ public class Enemy : MonoBehaviour
     {
         if(health < 0)
         {
-            isDeath = true;
             Destroy(gameObject);
         }
     }

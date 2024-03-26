@@ -7,11 +7,13 @@ public class Type
         Canon,
         Ballista,
         Poison,
+        Resource,
         None
     }
     public enum TroopType
     {
         Melee,
-        Range
+        Range,
+        Rob
     }
 }

@@ -29,9 +29,10 @@ public class PlayerTroop : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
     }
 
-    IEnumerator stopE()
+    IEnumerator StopTime()
     {
-        yield return new WaitForSeconds(1);
+        // Range to vary troop stop time
+        yield return new WaitForSeconds(Random.Range(0.2f,0.5f));
         isStopTime = false;
     }
 
@@ -49,14 +50,24 @@ public class PlayerTroop : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            // remember to cycle through all the enemy script
             Enemy enemy = other.GetComponent<Enemy>();
-            if(enemy != null && !enemy.isDeath)
+            if(enemy != null)
             {
-                enemy.TakeDamage(damage);
-            }
+                if(enemy.enemyType == Type.EType.Resource)
+                {
+                    Resource resource = other.GetComponent<Resource>();
+                    resource.TakeResource(troopType, damage);
+                }
+                else
+                    enemy.TakeDamage(damage);
+            } 
         }
     }
+
+    ///<summary>
+    ///This function looks for all the nearest tower enemy to the player troop.
+    ///Note that it returns a GameObject.
+    ///</summary>
 
     protected void TroopAttackEnemy(Type.EType priority)
     {
@@ -86,7 +97,7 @@ public class PlayerTroop : MonoBehaviour
                 isTarget = false;
                 isStopTime = true;
 
-                StartCoroutine(stopE());
+                StartCoroutine(StopTime());
                 // if there are no enemies, then stop moving and disable the script
                 if (!LookForEnemy())
                 {
@@ -104,9 +115,10 @@ public class PlayerTroop : MonoBehaviour
     ///</summary>
     protected GameObject LookForEnemy(Type.EType priority)
     {
-        bool isPriority=false;
+        bool isPriority = false;
         GameObject result = null;
         GameObject[] objEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+
         switch (objEnemies.Length)
         {
             case 0:
@@ -116,6 +128,8 @@ public class PlayerTroop : MonoBehaviour
                 return result;
         }
 
+        float dis = 0f;
+
         // This is where the course of ASP NET CORE Save me (^_^), if not, I would have loop the objEnemies again to check for the
         // enemyType, and it would have took some lines of code.
         // Thanks ASP NET CORE, it help me learn basic of Linq !!!!
@@ -124,9 +138,16 @@ public class PlayerTroop : MonoBehaviour
         if(priority != Type.EType.None && objEnemies.Any(i => i.GetComponent<Enemy>().enemyType == priority))
         {
             isPriority = true;
-        }
+            // assign the distance of the first object that matches the priority
+            GameObject temp = objEnemies.FirstOrDefault(i => i.GetComponent<Enemy>().enemyType == priority);
 
-        float dis = Vector3.Distance(objEnemies[0].transform.position, transform.position);
+            dis = Vector3.Distance(temp.transform.position, transform.position);
+        }
+        else
+        {
+            dis = Vector3.Distance(objEnemies[0].transform.position, transform.position);
+        }
+        
         for (int i = 0; i < objEnemies.Length; i++)
         {
             for (int j = 0; j < objEnemies.Length; j++)
@@ -138,9 +159,9 @@ public class PlayerTroop : MonoBehaviour
                 float b = Vector3.Distance(transform.position, objEnemies[j].transform.position);
                 if (a < b)
                 {
-                    if (a <= dis)
+                    if (isPriority)
                     {
-                        if (isPriority)
+                        if (a <= dis)
                         {
                             if (objEnemies[i].GetComponent<Enemy>().enemyType == priority)
                             {
@@ -148,12 +169,11 @@ public class PlayerTroop : MonoBehaviour
                                 result = objEnemies[i];
                             }
                         }
-                        else
-                        {
-                            dis = a;
-                            result = objEnemies[i];
-                        }
-                    }   
+                    }else if(a <= dis)
+                    {
+                        dis = a;
+                        result = objEnemies[i];
+                    }
                 }
             }
         }
@@ -167,6 +187,7 @@ public class PlayerTroop : MonoBehaviour
     protected bool LookForEnemy()
     {
         GameObject[] objEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+
         if (objEnemies.Any())
         {
             return true;
