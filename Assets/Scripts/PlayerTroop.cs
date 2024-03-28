@@ -8,6 +8,10 @@ public class PlayerTroop : MonoBehaviour
 
     public Type.TroopType troopType;
 
+    [SerializeField]
+    private GameObject troopModel;
+    private Animator anim;
+
     private bool isStopTime;
 
     private bool isTarget = false;
@@ -27,6 +31,8 @@ public class PlayerTroop : MonoBehaviour
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        anim = GetComponent<Animator>();
+
     }
 
     IEnumerator StopTime()

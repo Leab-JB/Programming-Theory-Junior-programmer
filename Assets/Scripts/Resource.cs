@@ -1,3 +1,6 @@
+using OpenCover.Framework.Model;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -14,7 +17,6 @@ public class Resource : Enemy
     public int resourceCurrent;
     protected override void Start()
     {
-        
         resourceCurrent = resourceMax;
     }
 
@@ -39,3 +41,4 @@ public class Resource : Enemy
         }
     }
 }
+
